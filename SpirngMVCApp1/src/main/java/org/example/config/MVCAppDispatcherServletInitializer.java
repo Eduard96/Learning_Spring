@@ -1,7 +1,11 @@
 package org.example.config;
 
+import org.springframework.web.filter.HiddenHttpMethodFilter;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 
 /**
      Этот class в место web.xml
@@ -31,5 +35,22 @@ public class MVCAppDispatcherServletInitializer extends AbstractAnnotationConfig
     @Override
     protected String[] getServletMappings() {
         return new String[]{"/"};
+    }
+
+    /**
+     * Две нижние функции нужны для того, чтобы обрабатывать такие запросы, которые
+     * являются PATCH, DELETE и тд методами
+     * @param servletContext
+     * @throws ServletException
+     */
+    @Override
+    public void onStartup(ServletContext servletContext) throws ServletException {
+        super.onStartup(servletContext);
+        registerHiddenFieldFilter(servletContext);
+    }
+
+    private void registerHiddenFieldFilter(ServletContext servletContext) {
+        servletContext.addFilter("hiddenHttpMethodFilter",
+                        new HiddenHttpMethodFilter()).addMappingForUrlPatterns(null, true, "/*");
     }
 }

@@ -11,7 +11,17 @@
     <div th:text="${person.getName()} + ' ' + ${person.getSurname()} + ' ' + ${person.getAge()}" >
 
     </div>
-    </p>
+
+    <div>
+        <a th:href="@{/people/{id}/edit(id=${person.getID()})}"> Edit user info </a>
+    </div>
+
+    <form th:method="DELETE" th:action="@{/people/{id}(id=${person.getID()})}">
+        <div>
+            <input type="submit" value="Delete user">
+        </div>
+    </form>
+
     <div>
         <a href="/people"> Back </a>
     </div>
