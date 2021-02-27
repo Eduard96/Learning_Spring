@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>People</title>
+</head>
+<body>
+hjhjhjh
+<div th:each="person : ${people}">
+    <a th:href="@{/people/{name}(name=${person.getName()})}"
+       th:text="${person.getName()}"> Here </a>
+</div>
+</body>
+</html>

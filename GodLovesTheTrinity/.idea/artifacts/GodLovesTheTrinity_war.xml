@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="GodLovesTheTrinity:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>GodLovesTheTrinity</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="GodLovesTheTrinity-1.0-SNAPSHOT.war">
+      <element id="artifact" artifact-name="GodLovesTheTrinity:war exploded" />
+    </root>
+  </artifact>
+</component>

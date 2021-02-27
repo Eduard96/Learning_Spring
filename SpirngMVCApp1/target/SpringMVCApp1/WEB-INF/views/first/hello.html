@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Hello</title>
+</head>
+<body>
+    <div>
+        <div>
+            Hello My Dear Friend
+        </div>
+        <div>
+            <a href="goodbye">Say Good Bye</a>
+        </div>
+        <h3>or</h3>
+        <div>
+            <a href="/exit" > Exit </a>
+        </div>
+        <h3>or</h3>
+        <div>
+            <a href="/first/hello?name=Eduard&surname=Matveev" > Request checking </a>
+        </div>
+        <p th:text="${message}"></p>
+    </div>
+</body>
+</html>
