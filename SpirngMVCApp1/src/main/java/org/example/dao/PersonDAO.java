@@ -3,6 +3,7 @@ package org.example.dao;
 import org.example.model.Person;
 import org.springframework.stereotype.Component;
 
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,52 +14,118 @@ import java.util.List;
 
 @Component
 public class PersonDAO {
-    private int ID_COUNTER = 0;
+    private int ID_COUNTER;
 
-    private final List<Person> people;
+    private static final String URL = "jdbc:mysql://localhost:3306/people_db";
+    private static final String user = "user";
+    private static final String password = "user";
 
-    /**
-     * List.of() returns immutable object - REMEMBER IT ! ! ! <(-_-)>
-     * @return
-     */
-    private List<Person> initPeople() {
-        ArrayList<Person> arr = new ArrayList<>();
-        arr.add(new Person(ID_COUNTER,"Eduard", "Matveev", 24));
-        arr.add(new Person(++ID_COUNTER,"Artak", "Kirakosyan", 24));
-        arr.add(new Person(++ID_COUNTER,"Mkrtich", "Mkhitaryan", 23));
-        arr.add( new Person(++ID_COUNTER,"Andranik", "Nanagulyan", 24));
-        arr.add(new Person(++ID_COUNTER,"Tatyana", "Yudaeva", 50));
-        arr.add(new Person(++ID_COUNTER,"Zograb", "Matveev", 51));
-        arr.add( new Person(++ID_COUNTER,"Viktoria", "Matveeva", 28));
+    private static Connection connection;
 
-        return arr;
+    static {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        try {
+            connection = DriverManager.getConnection(URL, user, password);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
     }
+//    private final List<Person> people;
+//
+//    /**
+//     * List.of() returns immutable object - REMEMBER IT ! ! ! <(-_-)>
+//     * @return
+//     */
+//    private List<Person> initPeople() {
+//        ArrayList<Person> arr = new ArrayList<>();
+//        arr.add(new Person(ID_COUNTER,"Eduard", "Matveev", 24));
+//        arr.add(new Person(++ID_COUNTER,"Artak", "Kirakosyan", 24));
+//        arr.add(new Person(++ID_COUNTER,"Mkrtich", "Mkhitaryan", 23));
+//        arr.add( new Person(++ID_COUNTER,"Andranik", "Nanagulyan", 24));
+//        arr.add(new Person(++ID_COUNTER,"Tatyana", "Yudaeva", 50));
+//        arr.add(new Person(++ID_COUNTER,"Zograb", "Matveev", 51));
+//        arr.add( new Person(++ID_COUNTER,"Viktoria", "Matveeva", 28));
+//
+//        return arr;
+//    }
 
     public PersonDAO() {
-        people = initPeople();
+        //people = initPeople();
     }
 
     public List<Person> getPeople() {
+        List<Person> people = new ArrayList<>();
+
+        try {
+            Statement statement = connection.createStatement();
+            String SQL = "SELECT * FROM Person";
+            ResultSet resultSet = statement.executeQuery(SQL);
+
+            while (resultSet.next()) {
+                people.add(new Person(resultSet.getInt("id"),
+                        resultSet.getString("name"),
+                        resultSet.getString("surname"),
+                        resultSet.getInt("age")));
+            }
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        ID_COUNTER = people.size();
         return people;
     }
 
     public Person getPersonByID(int id) {
-        return people.stream().filter(personName -> id == personName.getID()).findAny().orElse(null);
+        try {
+            Statement statement = connection.createStatement();
+            String SQL = String.format("SELECT * FROM Person WHERE id=%d;", id);
+            ResultSet resultSet = statement.executeQuery(SQL);
+
+            resultSet.next();
+            return new Person(resultSet.getInt("id"),
+                            resultSet.getString("name"),
+                            resultSet.getString("surname"),
+                            resultSet.getInt("age"));
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return null;
     }
 
     public void save(Person person) {
-        person.setID(++ID_COUNTER);
-        people.add(person);
+        person.setID(ID_COUNTER);
+        //people.add(person);
+        try {
+            Statement statement = connection.createStatement();
+            String SQL = String.format("INSERT INTO Person VALUES(%d, '%s', '%s', %d);", person.getID(), person.getName(), person.getSurname(), person.getAge());
+            statement.executeUpdate(SQL);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
     }
 
     public void editPerson(int id, Person person) {
-        Person newPerson = getPersonByID(id);
-        newPerson.setName(person.getName());
-        newPerson.setAge(person.getAge());
-        newPerson.setSurname(person.getSurname());
+        try {
+            Statement statement = connection.createStatement();
+            String SQL = String.format("UPDATE Person SET name='%s', surname='%s', age=%d WHERE id=%d;",
+                    person.getName(), person.getSurname(), person.getAge(), id);
+            statement.executeUpdate(SQL);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
     }
 
     public void deleteById(int id) {
-        people.removeIf(person -> id == person.getID());
+        try {
+            Statement statement = connection.createStatement();
+            String SQL = String.format("DELETE FROM Person WHERE id=%d;", id);
+            statement.executeUpdate(SQL);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
     }
 }
