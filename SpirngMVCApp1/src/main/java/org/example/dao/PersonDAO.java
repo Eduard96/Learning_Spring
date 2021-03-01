@@ -81,9 +81,13 @@ public class PersonDAO {
 
     public Person getPersonByID(int id) {
         try {
-            Statement statement = connection.createStatement();
-            String SQL = String.format("SELECT * FROM Person WHERE id=%d;", id);
-            ResultSet resultSet = statement.executeQuery(SQL);
+//            Statement statement = connection.createStatement();
+//            String SQL = String.format("SELECT * FROM Person WHERE id=%d;", id);
+//            ResultSet resultSet = statement.executeQuery(SQL);
+            PreparedStatement preparedStatement =
+                    connection.prepareStatement("SELECT * FROM Person WHERE id=?;");
+            preparedStatement.setInt(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
 
             resultSet.next();
             return new Person(resultSet.getInt("id"),
@@ -100,9 +104,17 @@ public class PersonDAO {
         person.setID(ID_COUNTER);
         //people.add(person);
         try {
-            Statement statement = connection.createStatement();
-            String SQL = String.format("INSERT INTO Person VALUES(%d, '%s', '%s', %d);", person.getID(), person.getName(), person.getSurname(), person.getAge());
-            statement.executeUpdate(SQL);
+//            Statement statement = connection.createStatement();
+//            String SQL = String.format("INSERT INTO Person VALUES(%d, '%s', '%s', %d);", person.getID(), person.getName(), person.getSurname(), person.getAge());
+//            statement.executeUpdate(SQL);
+
+            PreparedStatement preparedStatement =
+                    connection.prepareStatement("INSERT INTO Person VALUES(?, ?, ?, ?);");
+            preparedStatement.setInt(1, person.getID());
+            preparedStatement.setString(2, person.getName());
+            preparedStatement.setString(3, person.getSurname());
+            preparedStatement.setInt(4, person.getAge());
+            preparedStatement.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -110,10 +122,19 @@ public class PersonDAO {
 
     public void editPerson(int id, Person person) {
         try {
-            Statement statement = connection.createStatement();
-            String SQL = String.format("UPDATE Person SET name='%s', surname='%s', age=%d WHERE id=%d;",
-                    person.getName(), person.getSurname(), person.getAge(), id);
-            statement.executeUpdate(SQL);
+//            Statement statement = connection.createStatement();
+//            String SQL = String.format("UPDATE Person SET name='%s', surname='%s', age=%d WHERE id=%d;",
+//                    person.getName(), person.getSurname(), person.getAge(), id);
+//            statement.executeUpdate(SQL);
+
+            PreparedStatement preparedStatement =
+                    connection.prepareStatement("UPDATE Person SET name=?, surname=?, age=? WHERE id=?;");
+            preparedStatement.setString(1, person.getName());
+            preparedStatement.setString(2, person.getSurname());
+            preparedStatement.setInt(3, person.getAge());
+            preparedStatement.setInt(4, id);
+            preparedStatement.executeUpdate();
+
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -121,9 +142,13 @@ public class PersonDAO {
 
     public void deleteById(int id) {
         try {
-            Statement statement = connection.createStatement();
-            String SQL = String.format("DELETE FROM Person WHERE id=%d;", id);
-            statement.executeUpdate(SQL);
+//            Statement statement = connection.createStatement();
+//            String SQL = String.format("DELETE FROM Person WHERE id=%d;", id);
+//            statement.executeUpdate(SQL);
+
+            PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM Person WHERE id=?;");
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
