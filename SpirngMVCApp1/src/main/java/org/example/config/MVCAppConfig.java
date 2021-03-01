@@ -5,6 +5,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -22,6 +24,7 @@ import javax.sql.DataSource;
  */
 @Configuration
 @ComponentScan("org.example")
+@PropertySource("classpath:db.properties")
 @EnableWebMvc
 public class MVCAppConfig implements WebMvcConfigurer {
     /**
@@ -36,6 +39,9 @@ public class MVCAppConfig implements WebMvcConfigurer {
      * Обычное внедрение зависимости
      * В данном случае Spring внедрит applicationContext
      */
+    @Autowired
+    private Environment env;
+
     private final ApplicationContext applicationContext;
 
     @Autowired
@@ -88,10 +94,10 @@ public class MVCAppConfig implements WebMvcConfigurer {
     public DataSource dataSource() {
         DriverManagerDataSource driverManager = new DriverManagerDataSource();
 
-        driverManager.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        driverManager.setUrl("jdbc:mysql://localhost:3306/people_db");
-        driverManager.setUsername("user");
-        driverManager.setPassword("user");
+        driverManager.setDriverClassName(env.getRequiredProperty("driver"));
+        driverManager.setUrl(env.getRequiredProperty("url"));
+        driverManager.setUsername(env.getRequiredProperty("username"));
+        driverManager.setPassword(env.getRequiredProperty("password"));
 
         return driverManager;
     }
