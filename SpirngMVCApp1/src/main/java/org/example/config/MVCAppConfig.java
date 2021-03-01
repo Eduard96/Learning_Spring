@@ -5,13 +5,16 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.thymeleaf.Thymeleaf;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring5.view.ThymeleafViewResolver;
+
+import javax.sql.DataSource;
 
 /**
     Этот class в место applicationContext.xml
@@ -79,5 +82,22 @@ public class MVCAppConfig implements WebMvcConfigurer {
         ThymeleafViewResolver resolver = new ThymeleafViewResolver();
         resolver.setTemplateEngine(templateEngine());
         viewResolverRegistry.viewResolver(resolver);
+    }
+
+    @Bean
+    public DataSource dataSource() {
+        DriverManagerDataSource driverManager = new DriverManagerDataSource();
+
+        driverManager.setDriverClassName("com.mysql.cj.jdbc.Driver");
+        driverManager.setUrl("jdbc:mysql://localhost:3306/people_db");
+        driverManager.setUsername("user");
+        driverManager.setPassword("user");
+
+        return driverManager;
+    }
+
+    @Bean
+    public JdbcTemplate jdbcTemplate() {
+        return new JdbcTemplate(dataSource());
     }
 }
