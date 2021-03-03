@@ -21,6 +21,7 @@
     <input type="text" th:field="*{age}" id="age" th:default="${person.getAge()}"/>
     <div style="color: red" th:if="${#fields.hasErrors('age')}" th:errors="*{age}"></div>
     <br/>
+
     <input name="button" type="submit" value="Edit"/>
 </form>
 </body>

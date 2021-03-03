@@ -15,7 +15,7 @@ import java.util.List;
  */
 
 @Component
-public class PersonDAO {
+public class PersonDAO implements PersonDAOInterface{
 
     private static final String URL = "jdbc:mysql://localhost:3306/people_db";
     private static final String user = "user";
@@ -65,7 +65,8 @@ public class PersonDAO {
         //people = initPeople();
     }
 
-    public List<Person> getPeople() {
+    @Override
+    public List<Person> getAllUsers() {
         return jdbcTemplate.query("SELECT * FROM Person;", new BeanPropertyRowMapper<>(Person.class));
 //        List<Person> people = new ArrayList<>();
 //        try {
@@ -86,7 +87,8 @@ public class PersonDAO {
 //        return people;
     }
 
-    public Person getPersonByID(int id) {
+    @Override
+    public Person getUserById(int id) {
         return jdbcTemplate.query("SELECT * FROM Person WHERE id=?;", new BeanPropertyRowMapper<>(Person.class), id)
                 .stream().findAny().orElse(null);
 //        try {
@@ -109,7 +111,8 @@ public class PersonDAO {
 //        return null;
     }
 
-    public void save(Person person) {
+    @Override
+    public void persist(Person person) {
         //people.add(person);
         jdbcTemplate.update("INSERT INTO Person VALUES(?, ?, ?, ?);",
                  0, person.getName(), person.getSurname(), person.getAge());
@@ -130,7 +133,8 @@ public class PersonDAO {
 //        }
     }
 
-    public void editPerson(int id, Person person) {
+    @Override
+    public void update(int id, Person person) {
         jdbcTemplate.update("UPDATE Person SET name=?, surname=?, age=? WHERE id=?;",
                 person.getName(), person.getSurname(), person.getAge(), id);
 //        try {
@@ -152,7 +156,8 @@ public class PersonDAO {
 //        }
     }
 
-    public void deleteById(int id) {
+    @Override
+    public void delete(int id) {
         jdbcTemplate.update("DELETE FROM Person WHERE id=?;", id);
 //        try {
 ////            Statement statement = connection.createStatement();
