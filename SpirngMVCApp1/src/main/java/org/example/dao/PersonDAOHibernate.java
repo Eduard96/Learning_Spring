@@ -69,7 +69,6 @@ public class PersonDAOHibernate implements PersonDAOInterface {
     @Override
     public void persist(Person person) {
         getCurrentSession().persist(person);
-        person.setName("Because persist blet");
     }
 
     @Override

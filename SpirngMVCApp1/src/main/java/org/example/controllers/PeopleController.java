@@ -1,7 +1,7 @@
 package org.example.controllers;
 
 import org.example.model.Person;
-import org.example.services.PersonService;
+import org.example.services.PersonServiceWithRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,11 +21,10 @@ public class PeopleController {
      * в этом случае используем аннотацию @ModelAttribute
      */
 
-
-    private final PersonService personService;
+    private final PersonServiceWithRepository personService;
 
     @Autowired
-    public PeopleController(PersonService personService) {
+    public PeopleController(PersonServiceWithRepository personService) {
         this.personService = personService;
     }
 
